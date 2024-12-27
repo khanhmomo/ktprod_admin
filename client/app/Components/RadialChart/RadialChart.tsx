@@ -17,27 +17,34 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
-const chartData = [{ month: "january", desktop: 1260, mobile: 570 }]
+
 
 const chartConfig = {
-  desktop: {
-    label: "Desktop",
-    color: "hsl(var(--chart-1))",
-  },
-  mobile: {
-    label: "Mobile",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig
+    desktop: {
+      label: "Completed",
+      color: "#1e40af",
+    },
+    mobile: {
+      label: "Pending",
+      color: "#b91c1c",
+    },
+  } satisfies ChartConfig;
 
 export function RadialChart() {
-  const totalVisitors = chartData[0].desktop + chartData[0].mobile
+  const taskTotal = 100;
+
+  const chartData = [
+    {
+      pending: 80,
+      completed:20,  
+    },
+  ]
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col border-2 border-white shadow-none bg-[#EDEDED]">
       <CardHeader className="items-center pb-0">
-        <CardTitle>Radial Chart - Stacked</CardTitle>
-        <CardDescription>January - June 2024</CardDescription>
+        <CardTitle>Progress tracking</CardTitle>
+        <CardDescription>Task completion status</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-1 items-center pb-0">
         <ChartContainer
@@ -65,14 +72,14 @@ export function RadialChart() {
                           y={(viewBox.cy || 0) - 16}
                           className="fill-foreground text-2xl font-bold"
                         >
-                          {totalVisitors.toLocaleString()}
+                          {taskTotal}
                         </tspan>
                         <tspan
                           x={viewBox.cx}
                           y={(viewBox.cy || 0) + 4}
                           className="fill-muted-foreground"
                         >
-                          Visitors
+                          Tasks
                         </tspan>
                       </text>
                     )
@@ -81,14 +88,14 @@ export function RadialChart() {
               />
             </PolarRadiusAxis>
             <RadialBar
-              dataKey="desktop"
+              dataKey="completed"
               stackId="a"
               cornerRadius={5}
               fill="var(--color-desktop)"
               className="stroke-transparent stroke-2"
             />
             <RadialBar
-              dataKey="mobile"
+              dataKey="pending"
               fill="var(--color-mobile)"
               stackId="a"
               cornerRadius={5}

@@ -10,6 +10,10 @@ function Sidebar() {
         <div className="mt-4 mx-6">
           <RadialChart/>
         </div>
+
+        <button className="mt-auto mb-6 mx-6 py-4 px-8 bg-red-700 text-white rounded-[50px] hover:bg-[#3aafae] transition duration-200 ease-in-out">
+          Sign out
+        </button>
     </div>
   )
 }
