@@ -12,8 +12,8 @@ function LoginForm() {
   return (
     <form className="relative m-[2rem] px-10 py-14 rounded-lg bg-white w-full max-w-[520px]">
       <div className="relative z-10">
-        <h1 className="mb-2 text-center text-[1.35rem] font-medium">
-          KhanhTran <span className="text-red-700">Prod</span>uction WorkSpace 
+        <h1 className="mb-2 text-center text-[1.35rem] font-bold">
+          KhanhTran <span className="text-red-700">Prod</span>uction WorkSpace
         </h1>
         <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px]">
           Login Now. Don't have an account?{" "}

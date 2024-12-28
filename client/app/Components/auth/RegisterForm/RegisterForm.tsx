@@ -13,13 +13,13 @@ function RegisterForm() {
     <form className="relative m-[2rem] px-10 py-14 rounded-lg bg-white w-full max-w-[520px]">
       <div className="relative z-10">
         <h1 className="mb-2 text-center text-[1.35rem] font-medium">
-          Register for an Account
+          Register an Account
         </h1>
         <p className="mb-8 px-[2rem] text-center text-[#999] text-[14px]">
-          Create an account. Already have an account?{" "}
+          Already have an account?{" "}
           <a
             href="/login"
-            className="font-bold text-[#2ECC71] hover:text-[#7263F3] transition-all duration-300"
+            className="font-bold text-red-700 hover:text-blue-800 transition-all duration-300"
           >
             Login here
           </a>
@@ -34,8 +34,8 @@ function RegisterForm() {
             value={name}
             onChange={(e) => handlerUserInput("name")(e)}
             name="name"
-            className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
-            placeholder="John Doe"
+            className="px-4 py-3 border-[2px] rounded-md outline-black text-gray-800"
+            placeholder="Momo"
           />
         </div>
         <div className="mt-[1rem] flex flex-col">
@@ -48,8 +48,8 @@ function RegisterForm() {
             value={email}
             onChange={(e) => handlerUserInput("email")(e)}
             name="email"
-            className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
-            placeholder="johndoe@gmail.com"
+            className="px-4 py-3 border-[2px] rounded-md outline-black text-gray-800"
+            placeholder="momo@gmail.com"
           />
         </div>
         <div className="relative mt-[1rem] flex flex-col">
@@ -62,7 +62,7 @@ function RegisterForm() {
             value={password}
             onChange={(e) => handlerUserInput("password")(e)}
             name="password"
-            className="px-4 py-3 border-[2px] rounded-md outline-[#2ECC71] text-gray-800"
+            className="px-4 py-3 border-[2px] rounded-md outline-black text-gray-800"
             placeholder="***************"
           />
           <button
@@ -82,7 +82,7 @@ function RegisterForm() {
             type="submit"
             disabled={!name || !email || !password}
             onClick={registerUser}
-            className="mt-[1.5rem] flex-1 px-4 py-3 font-bold bg-[#2ECC71] text-white rounded-md hover:bg-[#1abc9c] transition-colors"
+            className="mt-[1.5rem] flex-1 px-4 py-3 font-bold bg-red-700 text-white rounded-md hover:bg-blue-800 transition-colors"
           >
             Register Now
           </button>
