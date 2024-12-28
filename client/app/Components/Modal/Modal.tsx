@@ -2,6 +2,8 @@
 import { useTasks } from "@/context/taskContext";
 import useDetectOutside from "@/hooks/useDetectOutside";
 import React, { useEffect } from "react";
+import { useUserContext } from "@/context/userContext";
+
 
 function Modal() {
   const {
@@ -15,6 +17,11 @@ function Modal() {
     updateTask,
   } = useTasks();
   const ref = React.useRef(null);
+
+  const { allUsers, user } = useUserContext();
+
+  console.log(allUsers);
+  
 
   // Use the hook to detect clicks outside the modal
   useDetectOutside({
@@ -34,7 +41,9 @@ function Modal() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    if (!task.link) {
+      task.link = "None";
+    }
     if (modalMode === "edit") {
       updateTask(task);
     } else if (modalMode === "add") {
@@ -51,68 +60,106 @@ function Modal() {
         onSubmit={handleSubmit}
         ref={ref}
       >
+        {user.role === "admin" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="title">Title</label>
+            <input
+              className="bg-[#F9F9F9] p-2 rounded-md border"
+              type="text"
+              id="title"
+              placeholder="Task Title"
+              name="title"
+              value={task.title}
+              onChange={(e) => handleInput("title")(e)}
+            />
+          </div>
+        )}
+        {user.role === "admin" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="description">Description</label>
+            <textarea
+              className="bg-[#F9F9F9] p-2 rounded-md border resize-none"
+              name="description"
+              placeholder="Task Description"
+              rows={4}
+              value={task.description}
+              onChange={(e) => handleInput("description")(e)}
+            />
+          </div>
+        )}
         <div className="flex flex-col gap-1">
-          <label htmlFor="title">Title</label>
-          <input
-            className="bg-[#F9F9F9] p-2 rounded-md border"
-            type="text"
-            id="title"
-            placeholder="Task Title"
-            name="title"
-            value={task.title}
-            onChange={(e) => handleInput("title")(e)}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="description">Description</label>
-          <textarea
-            className="bg-[#F9F9F9] p-2 rounded-md border resize-none"
-            name="description"
-            placeholder="Task Description"
-            rows={4}
-            value={task.description}
-            onChange={(e) => handleInput("description")(e)}
-          />
-        </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="priority">Select Priority</label>
+          <label htmlFor="user">Assign to</label>
           <select
             className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-            name="priority"
-            value={task.priority}
-            onChange={(e) => handleInput("priority")(e)}
+            name="user"
+            value={task.user || ""}
+            onChange={(e) => handleInput("user")(e)} // Set the selected user ID
           >
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="">Select a Crew</option>
+            {allUsers.map((user) => (
+              <option value={user._id}>
+                {user.name}
+              </option>
+            ))}
           </select>
         </div>
-        <div className="flex flex-col gap-1">
-          <label htmlFor="dueDate">Due Date</label>
-          <input
-            className="bg-[#F9F9F9] p-2 rounded-md border"
-            type="date"
-            name="dueDate"
-            value={task.dueDate}
-            onChange={(e) => handleInput("dueDate")(e)}
-          />
-        </div>
+        {user.role === "admin" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="priority">Select Priority</label>
+            <select
+              className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
+              name="priority"
+              value={task.priority}
+              onChange={(e) => handleInput("priority")(e)}
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+        )}
+        {user.role === "admin" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="dueDate">Due Date</label>
+            <input
+              className="bg-[#F9F9F9] p-2 rounded-md border"
+              type="date"
+              name="dueDate"
+              value={task.dueDate}
+              onChange={(e) => handleInput("dueDate")(e)}
+            />
+          </div>
+        )}
         <div className="flex flex-col gap-1">
           <label htmlFor="completed">Task Completed</label>
           <div className="flex items-center justify-between bg-[#F9F9F9] p-2 rounded-md border">
-            <label htmlFor="completed">Completed</label>
-            <div>
-              <select
-                className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-                name="completed"
-                value={task.completed ? "true" : "false"}
-                onChange={(e) => handleInput("completed")(e)}
+            <label htmlFor="completed" className="mr-2">Completed</label>
+            <div className="flex space-x-2">
+              <button
+                className={`px-4 py-2 rounded-md ${task.completed ? 'bg-green-700 text-white' : 'bg-gray-200'}`}
+                onClick={() => handleInput("completed")({ target: { value: "true", checked: true } })}
               >
-                <option value="false">No</option>
-                <option value="true">Yes</option>
-              </select>
+                Yes
+              </button>
+              <button
+                className={`px-4 py-2 rounded-md ${!task.completed ? 'bg-red-500 text-white' : 'bg-gray-200'}`}
+                onClick={() => handleInput("completed")({ target: { value: "false", checked: false } })}
+              >
+                No
+              </button>
             </div>
           </div>
+        </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="link">Result Link</label>
+          <input
+            className="bg-[#F9F9F9] p-2 rounded-md border"
+            type="url"
+            name="link"
+            placeholder="Add a link (optional)"
+            value={task.link !== "None" ? task.link : ""}
+            onChange={(e) => handleInput("link")(e)} // Handle link input
+          />
         </div>
 
         <div className="mt-8">

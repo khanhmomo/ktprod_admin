@@ -8,6 +8,9 @@ interface Task {
   priority: string;
   createdAt: string;
   updatedAt: string;
+  user: object;
+  link: string;
 }
 
 export type { Task };
+

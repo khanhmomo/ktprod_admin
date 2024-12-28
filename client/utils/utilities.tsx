@@ -7,12 +7,12 @@ export const formatTime = (createdAt: string) => {
 
   // if the task was created today
   if (created.isSame(now, "day")) {
-    return "Today";
+    return "today";
   }
 
   // if the task was created yesterday
   if (created.isSame(now.subtract(1, "days"), "day")) {
-    return "Yesterday";
+    return "yesterday";
   }
 
   // check if created with the last 7 days

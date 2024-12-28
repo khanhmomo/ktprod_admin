@@ -1,20 +1,21 @@
 "use client";
 import { useTasks } from "@/context/taskContext";
 import { useUserContext } from "@/context/userContext";
-import { github, moon, profile } from "@/utils/Icons";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 
+
 function Header() {
   const { user } = useUserContext();
-  const { openModalForAdd, activeTasks } = useTasks();
+  const { openModalForAdd, activeTasks, openUsersModal, openProfileModal } = useTasks();
+  const { allUsers} = useUserContext();
 
   const router = useRouter();
 
   const { name } = user;
 
   const userId = user._id;
+  const userRole = user.role;
 
   return (
     <header className="px-6 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
@@ -39,23 +40,9 @@ function Header() {
           )}
         </p>
       </div>
-      <div className="h-[50px] flex items-center gap-[10.4rem]">
-        <button
-          className="px-8 py-3 bg-red-700 text-white rounded-[50px]
-          hover:bg-blue-700 hover:text-white transition-all duration-200 ease-in-out"
-          onClick={() => {
-            if (userId) {
-              openModalForAdd();
-            } else {
-              router.push("/login");
-            }
-          }}
-        >
-          {userId ? "Add a new Task" : "Login / Register"}
-        </button>
-
-        
-      </div>
+      
+      
+      
     </header>
   );
 }

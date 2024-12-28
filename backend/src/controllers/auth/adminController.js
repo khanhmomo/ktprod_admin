@@ -30,3 +30,4 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     res.status(500).json({ message: "Cannot get users" });
   }
 });
+

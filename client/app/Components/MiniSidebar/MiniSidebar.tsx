@@ -1,10 +1,11 @@
 "use client";
 import IconCheck from "@/public/icons/IconCheck";
-import IconDeleteAll from "@/public/icons/IconDeleteAll";
+import IconUsers from "@/public/icons/IconUsers";
 import IconFileCheck from "@/public/icons/IconFileCheck";
 import IconGrid from "@/public/icons/IconGrid";
 import IconStopwatch from "@/public/icons/IconStopwatch";
-import { link } from "fs";
+
+import { useUserContext } from "@/context/userContext"; // Assuming you have a user context
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -12,11 +13,14 @@ import React from "react";
 
 function MiniSidebar() {
   const pathname = usePathname();
+  const { user } = useUserContext(); // Access the current user from context
 
+  // Function to get the stroke color based on the current pathname
   const getStrokeColor = (link: string) => {
     return pathname === link ? "#c62828" : "#71717a";
   };
 
+  // Define the navigation items
   const navItems = [
     {
       icon: <IconGrid strokeColor={getStrokeColor("/")} />,
@@ -38,7 +42,18 @@ function MiniSidebar() {
       title: "Overdue",
       link: "/overdue",
     },
+    // Only render this item if the user is an admin
+    ...(user && user.role === "admin"
+      ? [
+          {
+            icon: <IconUsers strokeColor={getStrokeColor("/userlist")} />,
+            title: "Users",
+            link: "/userlist",
+          },
+        ]
+      : []),
   ];
+
   return (
     <div className="basis-[5rem] flex flex-col bg-[#f9f9f9]">
       <div className="flex items-center justify-center h-[5rem]">
@@ -58,7 +73,6 @@ function MiniSidebar() {
             </li>
           ))}
         </ul>
-
       </div>
     </div>
   );

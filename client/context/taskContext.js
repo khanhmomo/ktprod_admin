@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useEffect } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { useUserContext } from "./userContext";
 import toast from "react-hot-toast";
 
@@ -9,6 +9,7 @@ const serverUrl = "http://localhost:8000/api/v1";
 
 export const TasksProvider = ({ children }) => {
   const userId = useUserContext().user._id;
+  const userRole = useUserContext().user.role;
 
   const [tasks, setTasks] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
@@ -19,6 +20,14 @@ export const TasksProvider = ({ children }) => {
   const [activeTask, setActiveTask] = React.useState(null);
   const [modalMode, setModalMode] = React.useState("");
   const [profileModal, setProfileModal] = React.useState(false);
+  const [UsersModal, setUsersModal] = React.useState(false);
+
+  const [selectedUser, setSelectedUser] = useState(null);
+
+
+
+  //admin
+  const[allTasks, setAllTasks] = React.useState([]);
 
   const openModalForAdd = () => {
     setModalMode("add");
@@ -36,9 +45,14 @@ export const TasksProvider = ({ children }) => {
     setProfileModal(true);
   };
 
+  const openUsersModal = () => {
+    setUsersModal(true);
+  };
+
   const closeModal = () => {
     setIsEditing(false);
     setProfileModal(false);
+    setUsersModal(false)
     setModalMode("");
     setActiveTask(null);
     setTask({});
@@ -49,8 +63,10 @@ export const TasksProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.get(`${serverUrl}/tasks`);
-
+      
       setTasks(response.data.tasks);
+      console.log("ROLE:", userRole);
+      console.log(response.data.tasks);
     } catch (error) {
       console.log("Error getting tasks", error);
     }
@@ -131,11 +147,17 @@ export const TasksProvider = ({ children }) => {
   // get pending tasks
   const activeTasks = tasks.filter((task) => !task.completed);
 
+
   useEffect(() => {
-    getTasks();
+    //if (userRole === "admiffn") {
+      //getAdminTasks();
+      //console.log("admin_here")
+    //} else {
+      getTasks();
+    //}
   }, [userId]);
 
-  console.log("Active tasks", activeTasks);
+  //console.log("Active tasks", activeTasks);
 
   return (
     <TasksContext.Provider
@@ -162,6 +184,9 @@ export const TasksProvider = ({ children }) => {
         activeTasks,
         completedTasks,
         profileModal,
+        UsersModal,
+        openUsersModal,
+     
       }}
     >
       {children}

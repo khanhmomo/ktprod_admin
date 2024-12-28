@@ -38,6 +38,10 @@ const TaskSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+    link: {
+        type: String,
+        default: "None",
+    },
     
 },{ timestamps: true });
 

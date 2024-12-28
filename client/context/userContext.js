@@ -21,6 +21,7 @@ export const UserContextProvider = ({ children }) => {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [modalMode, setModalMode] = React.useState("");
 
   // register user
   const registerUser = async (e) => {
@@ -320,6 +321,8 @@ export const UserContextProvider = ({ children }) => {
       setLoading(false);
     }
   };
+
+  
 
   // dynamic form handler
   const handlerUserInput = (name) => (e) => {

@@ -3,14 +3,14 @@ import TaskModel from "../../models/tasks/TaskModel.js"
 
 export const createTask = asyncHandler(async (req, res) => {
     try {
-        const {title, description, dueDate, priority, status} = req.body;
+        const {title, description, dueDate, priority, status, user, link} = req.body;
 
         if (!title || title.trim() === "") {
-            req.status(400).json({message: "Title is required!"});
+            res.status(400).json({message: "Title is required!"});
         }
 
         if (!description || description.trim() === "") {
-            req.status(400).json({message: "Description is required!"});
+            res.status(400).json({message: "Description is required!"});
         }
 
         const task = new TaskModel({
@@ -19,7 +19,8 @@ export const createTask = asyncHandler(async (req, res) => {
             dueDate,
             priority,
             status,
-            user: req.user._id,
+            user,
+            link,
         });
 
         await task.save();
@@ -36,11 +37,23 @@ export const createTask = asyncHandler(async (req, res) => {
 export const getTasks = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
+        const userRole = req.user.role;
+
+        
+        
         if (!userId) {
             res.status(400).json({message: "User not found"});
         }
-        const tasks = await TaskModel.find({user: userId});
 
+        var tasks;
+        if (userRole === "admin") {
+            console.log("THIS IS ADMIN");
+            tasks = await TaskModel.find({});
+        } else {
+            tasks = await TaskModel.find({user: userId});
+        }
+
+        
         res.status(200).json({
             length: tasks.length,
             tasks,
@@ -55,23 +68,26 @@ export const getTasks = asyncHandler(async (req, res) => {
 export const getTask = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
-        
+        const userRole = req.user.role;
+
         const {id} = req.params;
 
         if (!id) {
-            res.status(400).json({ message: "Please provide a task id"});
+            return res.status(400).json({ message: "Please provide a task id"});
         }
 
         const task = await TaskModel.findById(id);
+        
         if (!task) {
-            res.status(404).json( {message: "Task not found!"});
+            return res.status(404).json( {message: "Task not found!"});
         }
 
-        if (!task.user.equals(userId)) {
-            res.status(401).json({ message: "Not authorized!"});
+        if (!task.user.equals(userId) || userRole !== ("admin") ) {
+            return res.status(401).json({ message: "Not authorized!"});
         }
 
         res.status(200).json(task);
+        console.log(task.user);
 
     } catch (error) {
         console.log("Error in getTask", error.message);
@@ -81,9 +97,8 @@ export const getTask = asyncHandler(async (req, res) => {
 
 export const updateTask = asyncHandler(async (req, res) => {
     try {
-        const userId = req.user._id;
         const { id } = req.params;
-        const {title, description, dueDate, priority, status, completed} = req.body;
+        const {title, description, dueDate, priority, status, completed, user, link} = req.body;
         
         if (!id) {
             req.status(400).json({message: "Please provide a task id"});
@@ -100,6 +115,9 @@ export const updateTask = asyncHandler(async (req, res) => {
         task.dueDate = dueDate || task.dueDate;
         task.status = status || task.status;
         task.completed = completed || task.completed;
+        task.priority = priority || task.priority;
+        task.user = user || task.user;
+        task.link = link || task.link;
 
         await task.save();
 
@@ -114,16 +132,13 @@ export const updateTask = asyncHandler(async (req, res) => {
 export const deleteTask = asyncHandler(async (req, res) => {
     try {
         const userId = req.user._id;
+        const userRole = req.user.role;
         const { id } = req.params;
 
         const task = await TaskModel.findById(id);
 
         if (!task) {
             res.status(404).json({message: "Task not found!"});
-        }
-
-        if (!task.user.equals(userId)) {
-            res.status(401).json({message: "Not authorized!"});
         }
 
         await TaskModel.findByIdAndDelete(id);
