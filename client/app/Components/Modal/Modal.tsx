@@ -1,9 +1,14 @@
-"use client";
+import React, { useEffect } from "react";
 import { useTasks } from "@/context/taskContext";
 import useDetectOutside from "@/hooks/useDetectOutside";
-import React, { useEffect } from "react";
 import { useUserContext } from "@/context/userContext";
 
+interface User {
+  _id: string;
+  name: string;
+  role?: string;
+  // other fields if necessary
+}
 
 function Modal() {
   const {
@@ -16,12 +21,11 @@ function Modal() {
     activeTask,
     updateTask,
   } = useTasks();
-  const ref = React.useRef(null);
 
-  const { allUsers, user } = useUserContext();
+  const ref = React.useRef(null);
+  const { allUsers, user } = useUserContext(); // Assuming useUserContext returns allUsers of type User[]
 
   console.log(allUsers);
-  
 
   // Use the hook to detect clicks outside the modal
   useDetectOutside({
@@ -96,8 +100,8 @@ function Modal() {
             onChange={(e) => handleInput("user")(e)} // Set the selected user ID
           >
             <option value="">Select a Crew</option>
-            {allUsers.map((user) => (
-              <option value={user._id}>
+            {allUsers.map((user: User) => (
+              <option key={user._id} value={user._id}>
                 {user.name}
               </option>
             ))}
