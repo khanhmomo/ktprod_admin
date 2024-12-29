@@ -10,7 +10,6 @@ axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({ children }) => {
   const serverUrl = "https://ktprod-admin.onrender.com";
-
   const router = useRouter();
 
   const [user, setUser] = useState({});

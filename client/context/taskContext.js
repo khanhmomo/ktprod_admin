@@ -23,9 +23,7 @@ export const TasksProvider = ({ children }) => {
   const [UsersModal, setUsersModal] = React.useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
-
-
-
+  
   //admin
   const[allTasks, setAllTasks] = React.useState([]);
 
