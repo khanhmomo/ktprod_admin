@@ -47,7 +47,6 @@ export const getTasks = asyncHandler(async (req, res) => {
 
         var tasks;
         if (userRole === "admin") {
-            console.log("THIS IS ADMIN");
             tasks = await TaskModel.find({});
         } else {
             tasks = await TaskModel.find({user: userId});
@@ -82,9 +81,7 @@ export const getTask = asyncHandler(async (req, res) => {
             return res.status(404).json( {message: "Task not found!"});
         }
 
-        if (!task.user.equals(userId) || userRole !== ("admin") ) {
-            return res.status(401).json({ message: "Not authorized!"});
-        }
+        
 
         res.status(200).json(task);
         console.log(task.user);
@@ -106,9 +103,7 @@ export const updateTask = asyncHandler(async (req, res) => {
 
         const task = await  TaskModel.findById(id);
 
-        if (!task) {
-            res.status(401).json({message: "Not authorized!"});
-        }
+        
 
         task.title = title || task.title;
         task.description = description || task.description;

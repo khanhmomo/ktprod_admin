@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useUserContext } from "@/context/userContext";
 import useRedirect from "@/hooks/useUserRedirect";
 import { useTasks } from "@/context/taskContext";
+import { User } from "@/utils/types"; // Import the User type if not already imported
 
 export default function Home() {
     useRedirect("/login");
@@ -12,16 +13,16 @@ export default function Home() {
         useUserContext();
     const { name, email } = user;
 
-    
-
     return (
         <main className="m-6 h-full">
             <div className="flex justify-between">
                 <h1 className="text-2xl font-bold">Manage all Users</h1>
             </div>
-            <h1 className="text-xl font-semibold">Admin account will be marked with <span className="text-red-700">red</span></h1>
+            <h1 className="text-xl font-semibold">
+                Admin account will be marked with <span className="text-red-700">red</span>
+            </h1>
             <div className="pb-[2rem] mt-6 grid grid-cols-[repeat(auto-fill,minmax(1000px,1fr))] gap-[1.5rem]">
-                {allUsers.map(function (user) {
+                {allUsers.map((user: User) => { // Explicitly type the 'user' parameter
                     const [selectedRole, setSelectedRole] = useState(user.role); // Set initial value to user.role
 
                     return (
@@ -41,7 +42,6 @@ export default function Home() {
                                     <h1 className="font-semibold text-1xl">{user.bio}</h1>
                                     <h1 className="font-semibold text-1xl">{user.email}</h1>
                                 </div>
-                                
                             </div>
                         </div>
                     );

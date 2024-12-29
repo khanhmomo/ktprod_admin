@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
+"use client";
 import { useTasks } from "@/context/taskContext";
 import useDetectOutside from "@/hooks/useDetectOutside";
+import React, { useEffect } from "react";
 import { useUserContext } from "@/context/userContext";
-
-interface User {
-  _id: string;
-  name: string;
-  role?: string;
-  // other fields if necessary
-}
-
+import { User } from "@/utils/types";  // Import the User type
 
 function Modal() {
   const {
@@ -22,11 +16,9 @@ function Modal() {
     activeTask,
     updateTask,
   } = useTasks();
-
   const ref = React.useRef(null);
-  const { allUsers, user } = useUserContext(); // Assuming useUserContext returns allUsers of type User[]
 
-  console.log(allUsers);
+  const { allUsers, user } = useUserContext();
 
   // Use the hook to detect clicks outside the modal
   useDetectOutside({
@@ -101,7 +93,7 @@ function Modal() {
             onChange={(e) => handleInput("user")(e)} // Set the selected user ID
           >
             <option value="">Select a Crew</option>
-            {allUsers.map((user: User) => (
+            {allUsers?.map((user: User) => (
               <option key={user._id} value={user._id}>
                 {user.name}
               </option>
@@ -142,14 +134,12 @@ function Modal() {
             <div className="flex space-x-2">
               <button
                 className={`px-4 py-2 rounded-md ${task.completed ? 'bg-green-700 text-white' : 'bg-gray-200'}`}
-                onClick={() => handleInput("completed")({ target: { value: "true", checked: true } })}
-              >
+                onClick={() => handleInput("completed")({ target: { value: "true", checked: true } })}>
                 Yes
               </button>
               <button
                 className={`px-4 py-2 rounded-md ${!task.completed ? 'bg-red-500 text-white' : 'bg-gray-200'}`}
-                onClick={() => handleInput("completed")({ target: { value: "false", checked: false } })}
-              >
+                onClick={() => handleInput("completed")({ target: { value: "false", checked: false } })}>
                 No
               </button>
             </div>
@@ -170,9 +160,7 @@ function Modal() {
         <div className="mt-8">
           <button
             type="submit"
-            className={`text-white py-2 rounded-md w-full hover:bg-blue-800/90 transition duration-200 ease-in-out ${
-              modalMode === "edit" ? "bg-blue-800" : "bg-red-700"
-            }`}
+            className={`text-white py-2 rounded-md w-full hover:bg-blue-800/90 transition duration-200 ease-in-out ${modalMode === "edit" ? "bg-blue-800" : "bg-red-700"}`}
           >
             {modalMode === "edit" ? "Update Task" : "Create Task"}
           </button>

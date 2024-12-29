@@ -14,3 +14,11 @@ interface Task {
 
 export type { Task };
 
+export interface User {
+  _id: string;
+  name: string;
+  role: string;
+  bio: string;
+  email: string;
+  // Add any other fields you expect on a User object
+}

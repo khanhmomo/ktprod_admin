@@ -6,12 +6,29 @@ import React from "react";
 import { motion } from "framer-motion";
 import { item } from "@/utils/animations";
 import { useUserContext } from "@/context/userContext";
+import { User } from "@/utils/types";  // Import the User type
 
 interface TaskItemProps {
   task: Task;
 }
 
 function TaskItem({ task }: TaskItemProps) {
+  const { user, allUsers } = useUserContext();
+  
+  // Ensure that 'user' is properly typed as `User | null`
+  const userRole = user?.role;  // Safe optional chaining
+  
+  // Define assignedUser with appropriate type: `User | null`
+  let assignedUser: User | null = null;
+  
+  if (userRole === "admin" && user) {
+    // Explicitly type 'u' as `User` in the find method
+    assignedUser = allUsers.find((u: User) => u._id === task.user.toString()) || null;
+  } else {
+    assignedUser = user;  // For non-admins, assigned user is the current logged-in user
+  }
+
+  // Function to determine the priority color for the task
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "low":
@@ -39,23 +56,8 @@ function TaskItem({ task }: TaskItemProps) {
       return "text-blue-800"; // More than 7 days left
     }
   };
-  const handleOpenLink = () => {
-    if (task.link && task.link !== "None") {
-      window.open(task.link, "_blank");
-    }
-  };
 
   const { getTask, openModalForEdit, deleteTask, modalMode } = useTasks();
-  const {user, allUsers} = useUserContext();
-  const userRole = user.role;
-  
-  var assignedUser;
-  if (userRole === "admin") {
-    assignedUser = allUsers.find(user => user._id === task.user);
-  } else {
-    assignedUser = user;
-  }
-   
 
   return (
     <motion.div
@@ -75,34 +77,14 @@ function TaskItem({ task }: TaskItemProps) {
           </p>
         )}
         {task.completed && (
-          <p className="text-2xl font-bold text-green-700">Completed</p>
+          <p className="text-2xl font-bold text-green-800">Completed</p>
         )}
         <p className="text-lg text-gray-400">
           Require: 
           <span className="text-black">
             {assignedUser ? assignedUser.name : "Unknown"}
           </span>
-          
         </p>
-
-        {/* View Result Link Button */}
-        {task.link && task.link !== "None" && (
-          <button
-            className="mt-2 px-4 py-2 bg-blue-800 text-white rounded-md hover:bg-blue-700"
-            onClick={handleOpenLink}
-          >
-            View Result
-          </button>
-        )}
-
-        {task.link === "None" && (
-          <button
-            className="mt-2 px-4 py-2 bg-gray-300 text-gray-600 cursor-not-allowed rounded-md"
-            disabled
-          >
-            No Link Available
-          </button>
-        )}
       </div>
       <div className="mt-auto flex justify-between items-center">
         <p className="text-sm text-gray-400">{formatTime(task.createdAt)}</p>

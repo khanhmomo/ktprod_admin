@@ -23,9 +23,6 @@ export const TasksProvider = ({ children }) => {
   const [UsersModal, setUsersModal] = React.useState(false);
 
   const [selectedUser, setSelectedUser] = useState(null);
-  
-  //admin
-  const[allTasks, setAllTasks] = React.useState([]);
 
   const openModalForAdd = () => {
     setModalMode("add");
@@ -147,15 +144,10 @@ export const TasksProvider = ({ children }) => {
 
 
   useEffect(() => {
-    //if (userRole === "admiffn") {
-      //getAdminTasks();
-      //console.log("admin_here")
-    //} else {
-      getTasks();
-    //}
-  }, [userId]);
 
-  //console.log("Active tasks", activeTasks);
+      getTasks();
+    
+  }, [userId]);
 
   return (
     <TasksContext.Provider
