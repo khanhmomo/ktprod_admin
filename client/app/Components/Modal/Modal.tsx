@@ -10,6 +10,7 @@ interface User {
   // other fields if necessary
 }
 
+
 function Modal() {
   const {
     task,
