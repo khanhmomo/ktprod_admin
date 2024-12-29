@@ -3,7 +3,6 @@ import { useTasks } from "@/context/taskContext";
 import useRedirect from "@/hooks/useUserRedirect";
 import Filters from "./Components/Filters/Filters"; // Import the Filters component
 import TaskItem from "./Components/TaskItem/TaskItem";
-import { Task } from "@/utils/types";
 import { filteredTasks } from "@/utils/utilities";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -11,10 +10,11 @@ import { container, item } from "@/utils/animations";
 import { useUserContext } from "@/context/userContext";
 import { generateReport } from "@/utils/generateReport"; // Import the generateReport function
 
-interface User {
-  _id: string;
-  name: string;
-  role: string;
+import { Task, User } from "@/utils/types"; // Import Task and User from shared types
+
+// Type guard to check if an object is a User
+function isUser(user: any): user is User {
+  return user && typeof user === "object" && "_id" in user;
 }
 
 export default function Home() {
@@ -28,11 +28,20 @@ export default function Home() {
   const [selectedUser, setSelectedUser] = useState<string>("all");
 
   // Filter tasks based on selected user, month, and year
-  const filterTasks = (tasks: Task[], userId: string, month: string, year: string) => {
+  const filterTasks = (tasks: Task[], userId: string, month: string, year: string): Task[] => {
     let filtered = tasks;
 
     if (userId !== "all") {
-      filtered = filtered.filter((task) => task.user === userId);
+      // Use type guard to check if task.user is a User and safely access _id
+      filtered = filtered.filter((task) => {
+        const taskUserId = typeof task.user === "string"
+          ? task.user // If task.user is a string (user ID), use it directly
+          : isUser(task.user) // If task.user is a User object, use its _id
+          ? task.user._id
+          : undefined;
+
+        return taskUserId === userId;
+      });
     }
 
     filtered = filtered.filter((task) => {
@@ -56,13 +65,22 @@ export default function Home() {
   };
 
   // Sorting function for user, due date, and priority
-  const sortTasks = (tasks: Task[], type: string) => {
+  const sortTasks = (tasks: Task[], type: string): Task[] => {
     if (type === "user") {
       return [...tasks].sort((a, b) => {
-        const userA = allUsers.find((u) => u._id === a.user);
-        const userB = allUsers.find((u) => u._id === b.user);
-        const nameA = userA ? userA.name.toLowerCase() : "";
-        const nameB = userB ? userB.name.toLowerCase() : "";
+        // First, we need to safely handle both cases where task.user can be either a string or a User object
+        const userA = typeof a.user === "string"
+          ? allUsers.find((u: User) => u._id === a.user.toString())  // Find the User by string ID
+          : isUser(a.user) ? a.user : undefined; // If it's a User object, use it directly
+
+        const userB = typeof b.user === "string"
+          ? allUsers.find((u: User) => u._id === b.user.toString())  // Find the User by string ID
+          : isUser(b.user) ? b.user : undefined; // If it's a User object, use it directly
+
+        // Now handle undefined cases where user might not be found
+        const nameA = userA ? userA.name.toLowerCase() : ""; // Default to empty string if user not found
+        const nameB = userB ? userB.name.toLowerCase() : ""; // Default to empty string if user not found
+
         return nameA.localeCompare(nameB);
       });
     } else if (type === "dueDate") {
@@ -71,12 +89,12 @@ export default function Home() {
       });
     } else if (type === "priority") {
       return [...tasks].sort((a, b) => {
-        // Ensure priority is a valid key by using the priorityOrder object
         const priorityA = priorityOrder[a.priority as 'low' | 'medium' | 'high'];
         const priorityB = priorityOrder[b.priority as 'low' | 'medium' | 'high'];
         return priorityA - priorityB;
       });
     }
+
     return tasks; // Default if no sort type is selected
   };
 
@@ -92,7 +110,7 @@ export default function Home() {
 
   // Generate the report (move this to generateReport.ts)
   const handleGenerateReport = () => {
-    generateReport(sortedTasks, allUsers, selectedMonth, selectedYear, selectedUser, user);
+    generateReport(sortedTasks, allUsers, selectedMonth, selectedYear, selectedUser);
   };
 
   return (
@@ -177,12 +195,15 @@ export default function Home() {
             onChange={(e) => setSelectedYear(e.target.value)}
           >
             <option value="all">All</option>
-            {Array.from(new Set(tasks.map((task) => new Date(task.dueDate).getFullYear())))
-              .map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
+            {[...new Set(tasks.map((task: Task) => new Date(task.dueDate).getFullYear()))].map((year) => (
+              <option key={year as number} value={(year as number).toString()}>
+                {year as number}
+              </option>
+            ))}
+
+
+
+
           </select>
         </div>
 
@@ -203,7 +224,7 @@ export default function Home() {
         animate="visible"
       >
         {sortedTasks.map((task: Task, i: number) => (
-          <TaskItem key={i} task={task} />
+          <TaskItem key={i.toString()} task={task} /> 
         ))}
 
         {user.role === "admin" && (
