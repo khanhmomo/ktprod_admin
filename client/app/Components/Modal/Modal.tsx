@@ -41,6 +41,10 @@ function Modal() {
     if (!task.link) {
       task.link = "None";
     }
+    if (!task.dueDate) {
+      task.dueDate = new Date().toISOString().split("T")[0];
+    }
+  
     if (modalMode === "edit") {
       updateTask(task);
     } else if (modalMode === "add") {
@@ -68,7 +72,13 @@ function Modal() {
               name="title"
               value={task.title}
               onChange={(e) => handleInput("title")(e)}
+              required 
             />
+            {task.title === "" && (
+              <span className="text-red-500 text-sm">
+                Title is required.
+              </span>
+            )}
           </div>
         )}
         {user.role === "admin" && (
@@ -91,14 +101,22 @@ function Modal() {
             name="user"
             value={task.user || ""}
             onChange={(e) => handleInput("user")(e)} // Set the selected user ID
+            required // Ensures the select input is required
           >
-            <option value="">Select a Crew</option>
+            <option value="" disabled>
+              Select a Crew
+            </option>
             {allUsers?.map((user: User) => (
               <option key={user._id} value={user._id}>
                 {user.name}
               </option>
             ))}
           </select>
+          {!task.user && (
+            <span className="text-red-500 text-sm">
+              Please select a crew member.
+            </span>
+          )}
         </div>
         {user.role === "admin" && (
           <div className="flex flex-col gap-1">
@@ -120,9 +138,9 @@ function Modal() {
             <label htmlFor="dueDate">Due Date</label>
             <input
               className="bg-[#F9F9F9] p-2 rounded-md border"
-              type="date"
               name="dueDate"
-              value={task.dueDate}
+              type="date"
+              value={task.dueDate || new Date().toISOString().split("T")[0]} // Default to today's date
               onChange={(e) => handleInput("dueDate")(e)}
             />
           </div>

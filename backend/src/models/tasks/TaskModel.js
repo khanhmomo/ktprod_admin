@@ -15,6 +15,7 @@ const TaskSchema = new mongoose.Schema({
     dueDate: {
         type: String,
         default: Date.now(),
+        required: true,
     },
 
     status: {
@@ -36,7 +37,7 @@ const TaskSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.ObjectId,
         ref: "User",
-        required: true,
+        //required: true,
     },
     link: {
         type: String,

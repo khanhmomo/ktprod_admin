@@ -4,6 +4,7 @@ import TaskModel from "../../models/tasks/TaskModel.js"
 export const createTask = asyncHandler(async (req, res) => {
     try {
         const {title, description, dueDate, priority, status, user, link} = req.body;
+        const userRole = req.user.role;
 
         if (!title || title.trim() === "") {
             res.status(400).json({message: "Title is required!"});
@@ -11,6 +12,10 @@ export const createTask = asyncHandler(async (req, res) => {
 
         if (!description || description.trim() === "") {
             res.status(400).json({message: "Description is required!"});
+        }
+
+        if (userRole !== "admin") {
+            return res.status(401).json({ message: "Not authorized!" });
         }
 
         const task = new TaskModel({
@@ -81,6 +86,9 @@ export const getTask = asyncHandler(async (req, res) => {
             return res.status(404).json( {message: "Task not found!"});
         }
 
+        if (!task.user.equals(userId)) {
+            return res.status(401).json({ message: "Not authorized!" });
+        }
         
 
         res.status(200).json(task);
@@ -98,7 +106,7 @@ export const updateTask = asyncHandler(async (req, res) => {
         const {title, description, dueDate, priority, status, completed, user, link} = req.body;
         
         if (!id) {
-            req.status(400).json({message: "Please provide a task id"});
+            return req.status(400).json({message: "Please provide a task id"});
         }
 
         const task = await  TaskModel.findById(id);

@@ -159,6 +159,8 @@ export default function Home() {
       </div>
 
       {/* Bottom Section - Align Month, Year, and Generate Report to the far right */}
+      
+      
       <div className="mt-6 flex justify-end items-center space-x-4">
         {/* Month Selector */}
         <div>
@@ -200,20 +202,19 @@ export default function Home() {
                 {year as number}
               </option>
             ))}
-
-
-
-
           </select>
         </div>
 
         {/* Generate Report Button */}
-        <button
-          className="p-2 rounded-md bg-blue-800 hover:bg-blue-800/70 text-white"
-          onClick={handleGenerateReport}
-        >
-          Generate Report
-        </button>
+        {user.role === "admin" && (
+          <button
+            className="p-2 rounded-md bg-blue-800 hover:bg-blue-800/70 text-white"
+            onClick={handleGenerateReport}
+          >
+            Generate Report
+          </button>
+        )}
+        
       </div>
 
       {/* Task Items */}

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { item } from "@/utils/animations";
 import { useUserContext } from "@/context/userContext";
 import { User } from "@/utils/types";  // Import the User type
+import moment from "moment";
 
 interface TaskItemProps {
   task: Task;
@@ -72,22 +73,43 @@ function TaskItem({ task }: TaskItemProps) {
           <p className="text-2xl font-bold text-gray-400">
             Due date:{" "}
             <span className={getDueDateColor()}>
-              {formatTime(task.dueDate)}
+            {moment(task.dueDate).isBefore(moment().startOf("day")) ?
+              "Overdue" : formatTime(task.dueDate)
+            }
             </span>
           </p>
         )}
         {task.completed && (
           <p className="text-2xl font-bold text-green-800">Completed</p>
         )}
+
         <p className="text-lg text-gray-400">
           Require: 
           <span className="text-black">
             {assignedUser ? assignedUser.name : "Unknown"}
           </span>
         </p>
+
+        <div className="mt-3">
+          <button
+            className={`px-4 py-2 rounded-lg text-white ${
+              task.link && task.link !== "None"
+                ? "bg-blue-800 hover:bg-blue-800/80"
+                : "bg-gray-400 cursor-not-allowed"
+            }`}
+            disabled={!task.link || task.link === "None"}
+            onClick={() => {
+              if (task.link && task.link !== "None") {
+                window.open(task.link, "_blank");
+              }
+            }}
+          >
+            {task.link && task.link !== "None" ? "View Result" : "No Link Available"}
+          </button>
+        </div>
       </div>
       <div className="mt-auto flex justify-between items-center">
-        <p className="text-sm text-gray-400">{formatTime(task.createdAt)}</p>
+        <p className="text-sm text-gray-400">Created: {formatTime(task.createdAt)}</p>
         <p className={`text-sm font-bold ${getPriorityColor(task.priority)}`}>
           {task.priority}
         </p>

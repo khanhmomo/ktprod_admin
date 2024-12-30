@@ -37,14 +37,7 @@ export default function Home() {
         {filtered.map((task: Task, i: number) => (
           <TaskItem key={i} task={task} />
         ))}
-        <motion.button
-          className="h-[16rem] w-full py-2 rounded-md text-lg font-medium text-gray-500 border-dashed border-2 border-gray-400
-          hover:bg-gray-300 hover:border-none transition duration-200 ease-in-out"
-          onClick={openModalForAdd}
-          variants={item}
-        >
-          Add New Task
-        </motion.button>
+        
       </motion.div>
     </main>
   );

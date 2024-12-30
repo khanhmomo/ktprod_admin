@@ -9,8 +9,8 @@ const UserContext = React.createContext();
 axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({ children }) => {
-  const serverUrl = "https://ktprodadmin-bcaec1ae8897.herokuapp.com";
-  //const serverUrl = "http://localhost:8000";
+  //const serverUrl = "https://ktprodadmin-bcaec1ae8897.herokuapp.com";
+  const serverUrl = "http://localhost:8000";
   
   const router = useRouter();
 
@@ -19,6 +19,7 @@ export const UserContextProvider = ({ children }) => {
   const [userState, setUserState] = useState({
     name: "",
     email: "",
+    bio: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -156,7 +157,7 @@ export const UserContextProvider = ({ children }) => {
 
   // update user details
   const updateUser = async (e, data) => {
-    e.preventDefault();
+    //e.preventDefault();
     setLoading(true);
 
     try {
