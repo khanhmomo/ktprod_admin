@@ -44,7 +44,10 @@ function Modal() {
     if (!task.dueDate) {
       task.dueDate = new Date().toISOString().split("T")[0];
     }
-  
+    if (!task.description) {
+      alert("Please provide a description.");
+      return;
+    }
     if (modalMode === "edit") {
       updateTask(task);
     } else if (modalMode === "add") {
@@ -89,35 +92,47 @@ function Modal() {
               name="description"
               placeholder="Task Description"
               rows={4}
-              value={task.description}
-              onChange={(e) => handleInput("description")(e)}
+              value={task.description || ""} // Ensure a blank description defaults to an empty string
+              onChange={(e) => handleInput("description")(e)} // Handle input for the description field
+              required // Make the field required
             />
+            {!task.description && (
+              <span className="text-red-500 text-sm">
+                Description is required.
+              </span>
+            )}
           </div>
         )}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="user">Assign to</label>
-          <select
-            className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
-            name="user"
-            value={task.user || ""}
-            onChange={(e) => handleInput("user")(e)} // Set the selected user ID
-            required // Ensures the select input is required
-          >
-            <option value="" disabled>
-              Select a Crew
-            </option>
-            {allUsers?.map((user: User) => (
-              <option key={user._id} value={user._id}>
-                {user.name}
+
+        {user.role === "admin" && (
+          <div className="flex flex-col gap-1">
+            <label htmlFor="user">Assign to</label>
+            <select
+              className="bg-[#F9F9F9] p-2 rounded-md border cursor-pointer"
+              name="user"
+              value={task.user || ""} // Default to empty, showing the placeholder
+              onChange={(e) => handleInput("user")(e)} // Update the task with selected user
+              required // Enforce selection
+            >
+              <option value="" disabled>
+                Select a Crew
               </option>
-            ))}
-          </select>
-          {!task.user && (
-            <span className="text-red-500 text-sm">
-              Please select a crew member.
-            </span>
-          )}
-        </div>
+              {allUsers?.map((user: User) => (
+                <option key={user._id} value={user._id}>
+                  {user.name}
+                </option>
+              ))}
+            </select>
+            {!task.user && (
+              <span className="text-red-500 text-sm">
+                Please select a crew member.
+              </span>
+            )}
+          </div>
+        )}
+
+
+
         {user.role === "admin" && (
           <div className="flex flex-col gap-1">
             <label htmlFor="priority">Select Priority</label>

@@ -372,7 +372,7 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (user.role === "admin") {
+    if (user.role === "admin" || user.role === "user") {
       getAllUsers();
     }
   }, [user.role]);

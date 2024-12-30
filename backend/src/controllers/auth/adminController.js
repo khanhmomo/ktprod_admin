@@ -22,12 +22,12 @@ export const getAllUsers = asyncHandler(async (req, res) => {
     const users = await User.find({});
 
     if (!users) {
-      res.status(404).json({ message: "No users found" });
+      return res.status(404).json({ message: "No users found" });
     }
 
-    res.status(200).json(users);
+    return res.status(200).json(users);
   } catch (error) {
-    res.status(500).json({ message: "Cannot get users" });
+    return res.status(500).json({ message: "Cannot get users" });
   }
 });
 
